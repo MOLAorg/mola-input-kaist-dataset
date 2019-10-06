@@ -1,3 +1,5 @@
+.. _mola-input-kaist-dataset:
+
 ========================================
 Module: mola-input-kaist-dataset
 ========================================
