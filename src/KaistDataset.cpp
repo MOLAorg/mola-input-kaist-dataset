@@ -34,7 +34,7 @@
 using namespace mola;
 
 // arguments: class_name, parent_class, class namespace
-IMPLEMENTS_MRPT_OBJECT_NS_PREFIX(KaistDataset, RawDataSourceBase, mola);
+IMPLEMENTS_MRPT_OBJECT(KaistDataset, RawDataSourceBase, mola)
 
 MRPT_INITIALIZER(do_register_KaistDataset)
 {

@@ -67,7 +67,7 @@ using kaist_dataset_t   = std::multimap<kaist_timestamp_t, SensorEntry>;
  */
 class KaistDataset : public RawDataSourceBase
 {
-    DEFINE_MRPT_OBJECT(KaistDataset)
+    DEFINE_MRPT_OBJECT(KaistDataset, mola)
 
    public:
     KaistDataset();
