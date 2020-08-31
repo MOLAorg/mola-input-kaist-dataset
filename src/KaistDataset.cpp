@@ -26,7 +26,7 @@
 #include <mrpt/obs/CObservationOdometry.h>
 #include <mrpt/obs/CObservationPointCloud.h>
 #include <mrpt/system/filesystem.h>  //ASSERT_DIRECTORY_EXISTS_()
-#include <yaml-cpp/yaml.h>
+#include <mrpt/containers/yaml.h>
 #include <Eigen/Dense>
 // Eigen must be before csv.h
 #include <mrpt/io/csv.h>
@@ -51,7 +51,7 @@ void KaistDataset::initialize(const std::string& cfg_block)
     ProfilerEntry tle(profiler_, "initialize");
 
     // Mandatory parameters:
-    auto c = YAML::Load(cfg_block);
+    auto c = mrpt::containers::yaml::FromText(cfg_block);
 
     ENSURE_YAML_ENTRY_EXISTS(c, "params");
     auto cfg = c["params"];
