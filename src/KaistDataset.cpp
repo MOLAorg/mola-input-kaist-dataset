@@ -17,7 +17,7 @@
 
 #include <mola-input-kaist-dataset/KaistDataset.h>
 #include <mola-kernel/variant_helper.h>
-#include <mola-kernel/yaml_helpers.h>
+#include <mola-yaml/yaml_helpers.h>
 #include <mrpt/core/initializer.h>
 #include <mrpt/io/vector_loadsave.h>
 #include <mrpt/obs/CActionRobotMovement2D.h>
