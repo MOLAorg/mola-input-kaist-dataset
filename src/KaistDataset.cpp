@@ -18,6 +18,7 @@
 #include <mola-input-kaist-dataset/KaistDataset.h>
 #include <mola-kernel/variant_helper.h>
 #include <mola-yaml/yaml_helpers.h>
+#include <mrpt/containers/yaml.h>
 #include <mrpt/core/initializer.h>
 #include <mrpt/io/vector_loadsave.h>
 #include <mrpt/obs/CActionRobotMovement2D.h>
@@ -26,7 +27,7 @@
 #include <mrpt/obs/CObservationOdometry.h>
 #include <mrpt/obs/CObservationPointCloud.h>
 #include <mrpt/system/filesystem.h>  //ASSERT_DIRECTORY_EXISTS_()
-#include <mrpt/containers/yaml.h>
+
 #include <Eigen/Dense>
 // Eigen must be before csv.h
 #include <mrpt/io/csv.h>
@@ -43,7 +44,7 @@ MRPT_INITIALIZER(do_register_KaistDataset)
 
 KaistDataset::KaistDataset() = default;
 
-void KaistDataset::initialize(const std::string& cfg_block)
+void KaistDataset::initialize(const Yaml& c)
 {
     using namespace std::string_literals;
 
@@ -51,8 +52,6 @@ void KaistDataset::initialize(const std::string& cfg_block)
     ProfilerEntry tle(profiler_, "initialize");
 
     // Mandatory parameters:
-    auto c = mrpt::containers::yaml::FromText(cfg_block);
-
     ENSURE_YAML_ENTRY_EXISTS(c, "params");
     auto cfg = c["params"];
     MRPT_LOG_DEBUG_STREAM("Initializing with these params:\n" << cfg);
@@ -273,39 +272,40 @@ void KaistDataset::spinOnce()
             dataset_next_->first * KAIST2UNIXTIME_FACTOR);
 
         std::visit(
-            overloaded{[&](std::monostate&) {
-                           THROW_EXCEPTION("Un-initialized entry!");
-                       },
-                       [&](SensorOdometry& odo) {
-                           build_dataset_entry_obs(odo);
-                           odo.obs->timestamp = obs_tim;
-                           this->sendObservationsToFrontEnds(odo.obs);
-                           odo.obs.reset();  // free mem
-                       },
-                       [&](SensorVelodyne& vlp) {
-                           build_dataset_entry_obs(vlp);
-                           vlp.obs->timestamp = obs_tim;
-                           this->sendObservationsToFrontEnds(vlp.obs);
-                           vlp.obs.reset();  // free mem
-                       },
-                       [&](SensorCamera& cam) {
-                           build_dataset_entry_obs(cam);
-                           cam.obs->timestamp = obs_tim;
-                           this->sendObservationsToFrontEnds(cam.obs);
-                           cam.obs.reset();  // free mem
-                       },
-                       [&](SensorSICK& sick) {
-                           build_dataset_entry_obs(sick);
-                           sick.obs->timestamp = obs_tim;
-                           this->sendObservationsToFrontEnds(sick.obs);
-                           sick.obs.reset();  // free mem
-                       },
-                       [&](SensorIMU& imu) {
-                           build_dataset_entry_obs(imu);
-                           imu.obs->timestamp = obs_tim;
-                           this->sendObservationsToFrontEnds(imu.obs);
-                           imu.obs.reset();  // free mem
-                       }},
+            overloaded{
+                [&](std::monostate&) {
+                    THROW_EXCEPTION("Un-initialized entry!");
+                },
+                [&](SensorOdometry& odo) {
+                    build_dataset_entry_obs(odo);
+                    odo.obs->timestamp = obs_tim;
+                    this->sendObservationsToFrontEnds(odo.obs);
+                    odo.obs.reset();  // free mem
+                },
+                [&](SensorVelodyne& vlp) {
+                    build_dataset_entry_obs(vlp);
+                    vlp.obs->timestamp = obs_tim;
+                    this->sendObservationsToFrontEnds(vlp.obs);
+                    vlp.obs.reset();  // free mem
+                },
+                [&](SensorCamera& cam) {
+                    build_dataset_entry_obs(cam);
+                    cam.obs->timestamp = obs_tim;
+                    this->sendObservationsToFrontEnds(cam.obs);
+                    cam.obs.reset();  // free mem
+                },
+                [&](SensorSICK& sick) {
+                    build_dataset_entry_obs(sick);
+                    sick.obs->timestamp = obs_tim;
+                    this->sendObservationsToFrontEnds(sick.obs);
+                    sick.obs.reset();  // free mem
+                },
+                [&](SensorIMU& imu) {
+                    build_dataset_entry_obs(imu);
+                    imu.obs->timestamp = obs_tim;
+                    this->sendObservationsToFrontEnds(imu.obs);
+                    imu.obs.reset();  // free mem
+                }},
             dataset_next_->second);
 
         // Advance:

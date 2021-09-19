@@ -74,7 +74,7 @@ class KaistDataset : public RawDataSourceBase
     ~KaistDataset() override = default;
 
     // See docs in base class
-    void initialize(const std::string& cfg_block) override;
+    void initialize(const Yaml& cfg) override;
     void spinOnce() override;
 
     /** KAIST timestamp is Unix time * 1e9 */
